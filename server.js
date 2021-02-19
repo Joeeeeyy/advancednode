@@ -22,8 +22,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 myDB(async (client) => {
-  const myDataBase = await client.db('database').collection('users');
-  
+  const myDB = await client.db('database').collection('users');
+  console.log('Successful Connection')
   app.route('/').get((req, res) => {
     res.render('pug', {
       title: 'Connected to Database',
@@ -35,11 +35,12 @@ myDB(async (client) => {
     done(null, user._id);
   });
   passport.deserializeUser((id, done) => {
-    myDataBase.findOne({ _id: new ObjectID(id) }, (err, doc) => {
+    myDB.findOne({ _id: new ObjectID(id) }, (err, doc) => {
       done(null, doc);
     });
   });
 }).catch((e) => {
+  console.log('Not Connected to Database')
   app.route('/').get((req, res) => {
     res.render('pug', {title: e, message: 'Unable to login'});
   });
