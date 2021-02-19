@@ -31,7 +31,7 @@ app.use(passport.session());
 
 myDB(async (client) => {
   const myDataBase = await client.db('database').collection('users');
-
+console.log('Successful Connection');
   // Be sure to change the title
   app.route('/').get((req, res) => {
     // Change the response to render the Pug template
@@ -54,12 +54,13 @@ myDB(async (client) => {
   });
   // Be sure to add this...
 }).catch((e) => {
-  app.route('/').get((req, res) => {
-    res.render('pug', {
-      title: e,
-      message: 'Unable to login'
-    });
-  });
+  console.log('not connected');
+  // app.route('/').get((req, res) => {
+    // res.render('pug', {
+      // title: e,
+      // message: 'Unable to login'
+    // });
+  // });
 });
 // app.listen out here...
 
