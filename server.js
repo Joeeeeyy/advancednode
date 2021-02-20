@@ -23,7 +23,7 @@ app.use(passport.session());
 
 myDB(async client => {
   const myDataBase = await client.db('database').collection('users');
-  
+
   // Be sure to change the title
   app.route('/').get((req, res) => {
     // Change the response to render the Pug template
@@ -49,9 +49,14 @@ myDB(async client => {
 fccTesting(app); // For fCC testing purposes
 app.use('/public', express.static(process.cwd() + '/public'));
 app.use(express.json());
-app.use(express.urlencoded({
-  extended: true
-}));
+app.use(express.urlencoded({ extended: true }));
+
+app.route('/').get((req, res) => {
+  res.render(process.cwd() + '/views/pug/index', {
+    title: 'Hello',
+    message: 'Please login'
+  });
+});
 
 app.listen(process.env.PORT || 3000, () => {
   console.log('Listening on port ' + process.env.PORT);
