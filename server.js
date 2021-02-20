@@ -2,10 +2,10 @@
 require('dotenv').config();
 const express = require('express');
 const myDB = require('./connection');
-const ObjectID = require('mongodb').ObjectID;
 const fccTesting = require('./freeCodeCamp/fcctesting.js');
 const session = require('express-session');
 const passport = require('passport');
+const ObjectID = require('mongodb').ObjectID;
 
 const app = express();
 
@@ -21,8 +21,13 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+fccTesting(app); // For fCC testing purposes
+app.use('/public', express.static(process.cwd() + '/public'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 myDB(async client => {
-  const myDataBase = await client.db('database').collection('users');
+  const myDataBase = await client.db('db1').collection('users');
 
   // Be sure to change the title
   app.route('/').get((req, res) => {
@@ -46,10 +51,6 @@ myDB(async client => {
   });
 });
 
-fccTesting(app); // For fCC testing purposes
-app.use('/public', express.static(process.cwd() + '/public'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 
 app.listen(process.env.PORT || 3000, () => {
