@@ -9,6 +9,13 @@ const passport = require('passport');
 
 const app = express();
 
+fccTesting(app); // For fCC testing purposes
+app.use('/public', express.static(process.cwd() + '/public'));
+app.use(express.json());
+app.use(express.urlencoded({
+  extended: true
+}));
+
 app.set('view engine', 'pug');
 
 app.use(session({
@@ -42,21 +49,19 @@ myDB(async client => {
   });
 }).catch(e => {
   app.route('/').get((req, res) => {
-    res.render('pug', { title: e, message: 'Unable to login' });
+    const resjson = { title: e, message: 'Unable to login' 
+  };
+  res.render('pug/index', 
+  resjson);
   });
 });
 
-fccTesting(app); // For fCC testing purposes
-app.use('/public', express.static(process.cwd() + '/public'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-app.route('/').get((req, res) => {
-  res.render(process.cwd() + '/views/pug/index', {
-    title: 'Hello',
-    message: 'Please login'
-  });
-});
+// app.route('/').get((req, res) => {
+//   res.render(process.cwd() + '/views/pug/index', {
+//     title: 'Hello',
+//     message: 'Please login'
+//   });
+// });
 
 app.listen(process.env.PORT || 3000, () => {
   console.log('Listening on port ' + process.env.PORT);
