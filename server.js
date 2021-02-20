@@ -21,7 +21,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-myDB(async (client) => {
+myDB(async client => {
   const myDataBase = await client.db('database').collection('users');
   
   // Be sure to change the title
