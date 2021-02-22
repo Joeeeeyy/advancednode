@@ -2,15 +2,21 @@
 require('dotenv').config();
 const express = require('express');
 const myDB = require('./connection');
-const ObjectID = require('mongodb').ObjectID;
 const fccTesting = require('./freeCodeCamp/fcctesting.js');
 const session = require('express-session');
 const passport = require('passport');
+const ObjectID = require('mongodb').ObjectID;
 const LocalStrategy = require('passport-local');
 
 const app = express();
-
 app.set('view engine', 'pug');
+
+fccTesting(app); // For fCC testing purposes
+app.use('/public', express.static(process.cwd() + '/public'));
+app.use(express.json());
+app.use(express.urlencoded({
+  extended: true
+}));
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -24,11 +30,10 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-myDB(async client => {
+myDB(async (client) => {
   const myDataBase = await client.db('database').collection('users');
 
   app.route('/').get((req, res) => {
-
     res.render('pug', {
       title: 'Connected to Database',
       message: 'Please login',
@@ -36,7 +41,9 @@ myDB(async client => {
     });
   });
 
-  app.route('/login').post(passport.authenticate('local', { failureRedirect: '/' }), (req, res) => {
+  app.route('/login').post(passport.authenticate('local', {
+    failureRedirect: '/'
+  }), (req, res) => {
     res.redirect('/profile');
   });
 
@@ -48,7 +55,7 @@ myDB(async client => {
     done(null, user._id);
   });
   passport.deserializeUser((id, done) => {
-    myDB.findOne({
+    myDataBase.findOne({
       _id: new ObjectID(id)
     }, (err, doc) => {
       done(null, doc);
@@ -56,16 +63,24 @@ myDB(async client => {
   });
   passport.use(new LocalStrategy(
     function (username, password, done) {
-      myDataBase.findOne({ username: username }, function (err, user) {
+      myDataBase.findOne({
+        username: username
+      }, function (err, user) {
         console.log('User ' + username + ' attempted to log in.');
-        if (err) { return done(err); }
-        if (!user) { return done(null, false); }
-        if (password !== user.password) { return done(null, false); }
+        if (err) {
+          return done(err);
+        }
+        if (!user) {
+          return done(null, false);
+        }
+        if (password !== user.password) {
+          return done(null, false);
+        }
         return done(null, user);
       });
     }
   ));
-}).catch(e => {
+}).catch((e) => {
   app.route('/').get((req, res) => {
     res.render('pug', {
       title: e,
@@ -73,13 +88,6 @@ myDB(async client => {
     });
   });
 });
-
-fccTesting(app);
-app.use('/public', express.static(process.cwd() + '/public'));
-app.use(express.json());
-app.use(express.urlencoded({
-  extended: true
-}));
 
 app.listen(process.env.PORT || 3000, () => {
   console.log('Listening on port ' + process.env.PORT);
