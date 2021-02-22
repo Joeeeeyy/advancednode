@@ -6,6 +6,7 @@ const ObjectID = require('mongodb').ObjectID;
 const fccTesting = require('./freeCodeCamp/fcctesting.js');
 const session = require('express-session');
 const passport = require('passport');
+const LocalStrategy = require('passport-local');
 
 const app = express();
 
@@ -26,9 +27,8 @@ app.use(passport.session());
 myDB(async client => {
   const myDataBase = await client.db('database').collection('users');
 
-  // Be sure to change the title
   app.route('/').get((req, res) => {
-    // Change the response to render the Pug template
+
     res.render('pug', {
       title: 'Connected to Database',
       message: 'Please login'
@@ -44,6 +44,17 @@ myDB(async client => {
       done(null, doc);
     });
   });
+  passport.use(new LocalStrategy(
+    function (username, password, done) {
+      myDataBase.findOne({ username: username }, function (err, user) {
+        console.log('User ' + username + ' attempted to log in.');
+        if (err) { return done(err); }
+        if (!user) { return done(null, false); }
+        if (password !== user.password) { return done(null, false); }
+        return done(null, user);
+      });
+    }
+  ));
 }).catch(e => {
   app.route('/').get((req, res) => {
     res.render('pug', {
@@ -53,13 +64,12 @@ myDB(async client => {
   });
 });
 
-fccTesting(app); // For fCC testing purposes
+fccTesting(app);
 app.use('/public', express.static(process.cwd() + '/public'));
 app.use(express.json());
 app.use(express.urlencoded({
   extended: true
 }));
-
 
 app.listen(process.env.PORT || 3000, () => {
   console.log('Listening on port ' + process.env.PORT);
