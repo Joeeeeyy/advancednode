@@ -30,7 +30,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-myDB(async client => {
+myDB(async (client) => {
   const myDataBase = await client.db('database').collection('users');
 
   app.route('/').get((req, res) => {
@@ -84,7 +84,7 @@ passport.serializeUser((user, done) => {
 });
 passport.deserializeUser((id, done) => {
   myDB.findOne({ _id: new ObjectID(id) }, (err, doc) => {
-    if (err) return console.log(err);
+    if (err) return console.error(err);
     done(null, doc);
   });
 });
