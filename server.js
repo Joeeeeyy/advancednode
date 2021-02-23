@@ -49,7 +49,7 @@ myDB(async client => {
     res.render(process.cwd() + '/views/pug/profile', { username: req.user.username });
   });
   
-app.route('logout').get((req, res) => {
+app.route('/logout').get((req, res) => {
   req.logout();
   res.redirect('/');
 });
