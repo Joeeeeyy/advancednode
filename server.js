@@ -56,7 +56,7 @@ myDB(async (client) => {
   
   app.route('/register').post(
     (req, res, next) => {
-      const hash - bcrypt.hashSync(req.body.password, 12);
+      const hash = bcrypt.hashSync(req.body.password, 12);
     myDataBase.findOne({ username: req.body.username }, function(err, user) {
       if (err) {
         next(err);
