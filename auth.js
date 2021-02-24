@@ -8,7 +8,7 @@ module.exports = function (app, myDataBase) {
         done(null, user._id);
     });
     passport.deserializeUser((id, done) => {
-        myDB.findOne({
+        myDataBase.findOne({
             _id: new ObjectID(id)
         }, (err, doc) => {
             if (err) return console.error(err);
@@ -17,10 +17,19 @@ module.exports = function (app, myDataBase) {
     });
     passport.use(new LocalStrategy(
         function (username, password, done) {
-            myDataBase.findOne({ username: username }, function (err, user) {
-                if (err) { return done(err); }
-                if (!user) { return done(null, false); }
-                if (password !== user.password) { return done(null, false); }
+            myDataBase.findOne({
+                username: username
+            }, function (err, user) {
+                console.log('User ' + username + ' attempted to log in.');
+                if (err) {
+                    return done(err);
+                }
+                if (!user) {
+                    return done(null, false);
+                }
+                if (password !== user.password) {
+                    return done(null, false);
+                }
                 return done(null, user);
             });
         }
