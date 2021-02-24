@@ -17,21 +17,12 @@ module.exports = function (app, myDataBase) {
     });
     passport.use(new LocalStrategy(
         function (username, password, done) {
-            myDataBase.findOne({
-                username: username
-            }, function (err, user) {
-                if (err) {
-                    return done(err);
-                }
-                if (!user) {
-                    return done(null, false);
-                }
-                if (!bcrypt.compareSync(password, user.password)) {
-                    return done(null, false);
-                }
+            myDataBase.findOne({ username: username }, function (err, user) {
+                if (err) { return done(err); }
+                if (!user) { return done(null, false); }
+                if (password !== user.password) { return done(null, false); }
                 return done(null, user);
             });
         }
     ));
-
 };

@@ -14,17 +14,13 @@ app.set('view engine', 'pug');
 fccTesting(app);
 app.use('/public', express.static(process.cwd() + '/public'));
 app.use(express.json());
-app.use(express.urlencoded({
-  extended: true
-}));
+app.use(express.urlencoded({ extended: true }));
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: true,
   saveUninitialized: true,
-  cookie: {
-    secure: false
-  }
+  cookie: { secure: false }
 }));
 
 app.use(passport.initialize());
