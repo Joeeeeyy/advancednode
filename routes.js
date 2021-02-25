@@ -1,3 +1,4 @@
+require('dotenv').config();
 const passport = require('passport');
 const bcrypt = require('bcrypt');
 
@@ -62,7 +63,7 @@ module.exports = function (app, myDataBase) {
     app.route('/auth/github/callback').get(passport.authenticate('github', {failureRedirect: '/' }), (req, res) => {
         res.redirect('/profile');
     });
-    
+
     app.use((req, res, next) => {
         res.status(404).type('text').send('Not Found');
     });
