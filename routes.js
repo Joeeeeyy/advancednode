@@ -1,11 +1,6 @@
 const passport = require('passport');
 const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
-const MongoStore = require('connect-mongo')(session);
-const URI = process.env.MONGO_URI;
-const store = new MongoStore({
-    url: URI
-});
 
 module.exports = function (app, myDataBase) {
     app.route('/').get((req, res) => {

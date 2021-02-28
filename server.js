@@ -15,9 +15,7 @@ const passportSocketIo = require('passport.socketio');
 const cookieParser = require('cookie-parser');
 const MongoStore = require('connect-mongo')(session);
 const URI = process.env.MONGO_URI;
-const store = new MongoStore({
-  url: URI
-});
+const store = new MongoStore({ url: URI });
 
 app.set('view engine', 'pug');
 
