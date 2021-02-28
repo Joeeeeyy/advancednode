@@ -1,6 +1,5 @@
 const passport = require('passport');
 const bcrypt = require('bcrypt');
-const cookieParser = require('cookie-parser');
 
 module.exports = function (app, myDataBase) {
     app.route('/').get((req, res) => {
